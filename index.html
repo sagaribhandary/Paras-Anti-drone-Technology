@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paras Anti-Drone Technologies Pvt Ltd.</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="styles.css">
+
+<style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7fc;
+            color: #0c0c0c;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 100vh;
+            width: 100vw;
+        }
+
+        header {
+            background-color: #00509e;
+            color: white;
+            padding: 20px;
+            text-align: left;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        header img {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            height: 60px;
+        }
+
+        .container {
+            padding: 60px;
+            max-width: 900px;
+            margin: auto;
+            background-color: rgb(255, 255, 255);
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .file-input {
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            color: #0c0c0c;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        #errorCount {
+            font-size: 1.1rem;
+            margin-top: 5px;
+            color: rgb(255, 162, 0);
+        }
+
+        #lengthMatch {
+            font-size: 1.1rem;
+            margin-top: 5px;
+            color: green;
+        }
+
+        #percentage {
+            font-size: 1.1rem;
+            margin-top: 5px;
+            color: green;
+        }
+
+        footer {
+            background-color: #00509e;
+            padding: 20px;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .diff-output {
+            text-align: left;
+            font-size: 0.9rem;
+            background-color: #d7cccc;
+            border-radius: 4px;
+            padding: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Paras Anti-Drone Technologies Pvt Ltd.</h1>
+        <img src="https://media.licdn.com/dms/image/v2/D4D0BAQH-BO-ELOlLXQ/company-logo_200_200/company-logo_200_200/0/1684496485337/paras_anti_drone_technologies_pvt_ltd_logo?e=2147483647&v=beta&t=MGSvzfCNEvG8TYCexrahuSIr6qC_583o9rgVy1fGzyI" alt="Paras Anti Drone Technologies Pvt Ltd Logo">
+    </header>
+
+    <div class="container">
+        <div class="file-input">
+            <label for="file1">Upload File 1:</label>
+            <input type="file" id="file1" accept=".txt">
+        </div>
+
+        <div class="file-input">
+            <label for="file2">Upload File 2:</label>
+            <input type="file" id="file2" accept=".txt">
+        </div>
+
+        <button id="compareButton">Compare data</button>
+
+        <p id="result"></p>
+        <p id="errorCount"></p>
+        <p id="lengthMatch"></p>
+        <p id="percentage"></p>
+        <div id="diffOutput" class="diff-output"></div>
+    </div>
+
+    <footer>
+        <span>Paras Anti-Drone Technologies Pvt Ltd.</span>
+    </footer>
+    <script src="app.js"></script>
+    <script src="/service_worker.js"></script>
+
+    <script>
+        const fileInput1 = document.getElementById('file1');
+        const fileInput2 = document.getElementById('file2');
+        const compareButton = document.getElementById('compareButton');
+        const result = document.getElementById('result');
+        const errorCountDisplay = document.getElementById('errorCount');
+        const lengthMatchDisplay = document.getElementById('lengthMatch');
+        const percentageDisplay = document.getElementById('percentage');
+        const diffOutput = document.getElementById('diffOutput');
+
+        function readFileAsText(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = () => reject(reader.error);
+                reader.readAsText(file);
+            });
+        }
+
+        compareButton.addEventListener('click', async () => {
+            const file1 = fileInput1.files[0];
+            const file2 = fileInput2.files[0];
+
+            if (!file1 || !file2) {
+                result.textContent = 'Please upload both files to compare.';
+                result.style.color = 'red';
+                errorCountDisplay.textContent = '';
+                lengthMatchDisplay.textContent = '';
+                percentageDisplay.textContent = '';
+                diffOutput.innerHTML = '';
+                return;
+            }
+
+            try {
+                const file1Text = await readFileAsText(file1);
+                const file2Text = await readFileAsText(file2);
+
+                const file1Lines = file1Text.split(/\r?\n/);
+                const file2Lines = file2Text.split(/\r?\n/);
+                const maxLength = Math.max(file1Lines.length, file2Lines.length);
+                let differences = '';
+                let errorCount = 0;
+
+                for (let i = 0; i < maxLength; i++) {
+                    const line1 = file1Lines[i] || '';
+                    const line2 = file2Lines[i] || '';
+
+                    if (line1 !== line2) {
+                        errorCount++;
+                        differences += `Difference at line ${i + 1}:<br>
+                        File 1: ${line1 || 'N/A'}<br>
+                        File 2: ${line2 || 'N/A'}<br><br>`;
+                    }
+                }
+
+                // Check length match
+                const lengthMatch = file1Text.length === file2Text.length;
+                lengthMatchDisplay.textContent = lengthMatch ? 
+                    'File Lengths Match.' : 
+                    `File Lengths Do Not Match. File 1 Length: ${file1Text.length}, File 2 Length: ${file2Text.length}.`;
+                lengthMatchDisplay.style.color = lengthMatch ? 'green' : 'red';
+
+                // Set results based on comparison
+                if (errorCount > 0) {
+                    result.textContent = 'DATA DID NOT MATCH!';
+                    errorCountDisplay.textContent = `Found ${errorCount} error(s) out of ${maxLength} lines.`;
+                    result.style.color = 'red';
+                    errorCountDisplay.style.color = 'red';
+                    diffOutput.innerHTML = differences;
+                } else {
+                    result.textContent = 'DATA MATCHED!';
+                    errorCountDisplay.textContent = 'No errors found.';
+                    result.style.color = 'green';
+                    errorCountDisplay.style.color = 'green';
+                    diffOutput.innerHTML = '';
+                }
+
+                // Calculate percentage of matching lines only if lengths match
+                if (lengthMatch) {
+                    const totalLines = Math.min(file1Lines.length, file2Lines.length);
+                    const percentage = (1-((totalLines - errorCount) / totalLines)) * 100;
+                    percentageDisplay.textContent = `BER: ${percentage.toFixed(2)}%`;
+                } else {
+                    percentageDisplay.textContent = '';
+                }
+
+            } catch (error) {
+                result.textContent = 'Error reading files. Please try again.';
+                result.style.color = 'orange';
+                errorCountDisplay.textContent = '';
+                lengthMatchDisplay.textContent = '';
+                percentageDisplay.textContent = '';
+            }
+        });
+   
+    </script>
+
+</body>
+
+</html>
