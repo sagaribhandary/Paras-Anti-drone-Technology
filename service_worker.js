@@ -3,7 +3,9 @@ const URLS_TO_CACHE = [
   '/',
   '/index.html',
   '/manifest.json',
-  'https://raw.githubusercontent.com/sagaribhandary/Paras-Anti-drone-Technology/main/Icon.png',
+  '/images/icons/Icon.png',
+   // Assuming the icon is located in /images/icons/desktop.png
+    // Assuming the icon is located in /images/icons/mobile.png
   // Add other essential files here
 ];
 
