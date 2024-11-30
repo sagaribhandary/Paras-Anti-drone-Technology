@@ -2,7 +2,7 @@
   "name": "Paras Anti-Drone Technologies Pvt Ltd.",
   "short_name": "WebApp",
   "description": "This is my progressive web app.",
-  "start_url": "https://sagaribhandary.github.io/Paras-Anti-drone-Technology/index.html",
+  "start_url": "/index.html",
   "id": "/index.html",
   "display": "standalone",
   "display_override": ["window-controls-overlay"],
@@ -22,12 +22,13 @@
   ],
   "screenshots": [
     {
-      "src": "https://github.com/sagaribhandary/Paras-Anti-drone-Technology/blob/main/desktop.png",
+      "src": "https://raw.github.com/sagaribhandary/Paras-Anti-drone-Technology/blob/main/desktop.png",
       "sizes": "1913x919",
-      "type": "image/png"
+      "type": "image/png",
+      "form_factor": "wide"
     },
     {
-      "src": "https://github.com/sagaribhandary/Paras-Anti-drone-Technology/blob/main/mobile.png",
+      "src": "https://raw.github.com/sagaribhandary/Paras-Anti-drone-Technology/blob/main/mobile.png",
       "sizes": "364x811",
       "type": "image/png"
     }
