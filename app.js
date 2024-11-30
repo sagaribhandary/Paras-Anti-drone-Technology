@@ -1,5 +1,6 @@
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('https://raw.githubusercontent.com/sagaribhandary/Paras-Anti-drone-Technology/main/service_worker.js')
+  navigator.serviceWorker.register('https://sagaribhandary.github.io/service_worker.js')
+
     .then(function(registration) {
       console.log('Service Worker registered with scope:', registration.scope);
     })
