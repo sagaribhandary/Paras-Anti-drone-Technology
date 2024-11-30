@@ -1,30 +1,43 @@
+const CACHE_NAME = 'my-cache-v1';
+const URLS_TO_CACHE = [
+  '/',
+  '/index.html',
+  '/manifest.json',
+  'https://raw.githubusercontent.com/sagaribhandary/Paras-Anti-drone-Technology/main/Icon.png',
+  // Add other essential files here
+];
 
-self.addEventListener('install', function(event) {
+// Install event: Caches resources
+self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open('my-cache').then(function(cache) {
-      return cache.addAll([
-        '/',
-        '/index.html', // Ensure index.html is cached
-        '/manifest.json',  // Cache the manifest file
-        'images/icons/desktop.png',  // Cache 192x192 icon
-        'images/icons/mobile.png',  // Cache 512x512 icon
-        // Add any other necessary files
-      ]);
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(URLS_TO_CACHE);
     })
   );
 });
 
-self.addEventListener('activate', function(event) {
+// Activate event: Cleans up old caches
+self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then(function(cacheNames) {
+    caches.keys().then((cacheNames) => {
       return Promise.all(
-        cacheNames.map(function(cacheName) {
-          return caches.delete(cacheName);
+        cacheNames.map((cacheName) => {
+          if (cacheName !== CACHE_NAME) {
+            console.log('Deleting old cache:', cacheName);
+            return caches.delete(cacheName);
+          }
         })
       );
     })
   );
 });
 
-
-
+// Fetch event: Serves resources from cache or falls back to network
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    caches.match(event.request).then((response) => {
+      // Return cached resource if available, else fetch from network
+      return response || fetch(event.request);
+    })
+  );
+});
