@@ -1,5 +1,5 @@
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('https://raw.githubusercontent.com/sagaribhandary/Paras-Anti-drone-Technology/main/service_worker.js')
+  navigator.serviceWorker.register('/service_worker.js')  // Use relative path
     .then(function(registration) {
       console.log('Service Worker registered with scope:', registration.scope);
     })
